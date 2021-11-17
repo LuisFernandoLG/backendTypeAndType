@@ -1,16 +1,17 @@
-from DbController import DbController
+from app.models.UserModel import UserModel
+from app.DbController import DbController
 
 
 class UserController(DbController):
     def __init__(self):
         DbController.__init__(self)
 
-    def add_new_user(self, name, surname, secondSurname, email, password, typeUser) -> bool:
-        if(self.exist_user(email=email) == True):
+    def add_new_user(self, user: UserModel) -> bool:
+        if(self.exist_user(user.email) == True):
             return False
 
         self.initialize_connection()
-        query = f"""INSERT INTO users VALUES (0, '{name}', '{surname}', '{secondSurname}', '{email}', '{password}', {typeUser});"""
+        query = f"""INSERT INTO users VALUES (NULL, '{user.name}', '{user.surname}', '{user.second_surname}', '{user.email}', '{user.password}', 2);"""
         self.cursor.execute(query)
         self.connection.commit()
         self.close_connection()
@@ -29,10 +30,10 @@ class UserController(DbController):
             return False
 
 
-sc = UserController()
+# sc = UserController()
 
-print(sc.add_new_user("Luis Fernando", "López",
-      "Gutiérrez", "fer@gmail.com", "1234567890", 1))
+# print(sc.add_new_user("Luis Fernando", "López",
+#       "Gutiérrez", "fer@gmail.com", "1234567890", 1))
 
 # print(sc.exist_user("fer@gmail.com"))
 
