@@ -17,7 +17,26 @@ class ScoreController(DbController):
         return True
 
     def get_scores(self, idUser):
-        pass
+        self.initialize_connection()
+        self.cursor.execute(f"SELECT * FROM scores WHERE user = {idUser};")
+        data = self.cursor.fetchall()
+        self.close_connection()
+        return self._format_score_user(data)
+
+    def _format_score_user(self, data):
+        data_formated = []
+        for score in data:
+            data_formated.append({
+                "scoreId": score[0],
+                "date": score[1],
+                "totalScore": score[2],
+                "userId": score[3],
+                "exerciseId": score[4],
+                "timeTaken": score[5],
+                "isCompleted": score[6],
+
+            })
+        return data_formated
 
     def get_ranking(self):
         self.initialize_connection()

@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 class ScoreModel(BaseModel):
     id:  Optional[int] = 1
-    last_date: str
+    last_date: Optional[str]
     total_score: int
     user_id: int
     exercise_id: int

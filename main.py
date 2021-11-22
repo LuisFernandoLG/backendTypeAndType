@@ -2,6 +2,7 @@ from logging import StreamHandler
 from typing import Optional
 from fastapi import FastAPI
 from pydantic.main import BaseModel
+from app.CategoriesController import CategoryController
 from app.ExerciseController import ExerciseController
 from fastapi.middleware.cors import CORSMiddleware
 from app.ScoreController import ScoreController
@@ -16,6 +17,7 @@ exerciseDb = ExerciseController()
 userDb = UserController()
 scoreDb = ScoreController()
 sessionDb = SessionController()
+categoryDb = CategoryController()
 
 origins = [
     "http://localhost.tiangolo.com",
@@ -84,7 +86,7 @@ def sign_in_user(user: UserModel):
     response = userDb.add_new_user(user)
     if(response == False):
         return {
-            "status": 202,
+            "status": 201,
             "statusText": "Correo ya registrado!",
         }
     else:
@@ -106,6 +108,46 @@ async def complete_exercises(score: ScoreModel):
     }
 
 
+@app.get("/score/{userId}")
+def get_score(userId):
+    data = scoreDb.get_scores(userId)
+    return {
+        "status": 202,
+        "statusText": "Successful",
+        "data": data,
+    }
+
+
+@app.get("/categories")
+def get_categories():
+    dataList = categoryDb.get_all()
+    return {
+        "status": 202,
+        "data": {"categories": dataList}
+    }
+
+
+@app.get("/exercises/search")
+def get_score(query: str = "", category: Optional[int] = -1):
+    data = []
+    if(category == -1):
+        print("SIN CATEGORIA")
+        print(f"""query:{query}""")
+        print(f"""category:{category}""")
+        data = exerciseDb.get_by_query(query)
+    else:
+        print("CON CATEGORIA")
+        print(f"""query:{query}""")
+        print(f"""category:{category    }""")
+        data = exerciseDb.get_by_query_and_category(query, category)
+
+    return {
+        "status": 202,
+        "statusText": "Successful",
+        "data": data
+    }
+
+
 class UserSession(BaseModel):
     email: str
     password: str
@@ -114,13 +156,15 @@ class UserSession(BaseModel):
 @app.post("/logIn")
 def get_session(userSession: UserSession):
     response = sessionDb.logIn(userSession.email, userSession.password)
+
     print(response)
     if(response == 1):
-        return {"status": "201", "statusTex": "Login éxitoso"}
+        user = userDb.get_user(userSession.email)
+        return {"status": "201", "statusText": "Login éxitoso", "data": {"user": user}}
     if(response == 0):
-        return {"status": "202", "statusTex": "Contraseña incorrecta"}
+        return {"status": "202", "statusText": "Contraseña incorrecta"}
     if(response == 3):
-        return {"status": "202", "statusTex": "Correo no registrado"}
+        return {"status": "202", "statusText": "Correo no registrado"}
 
 
 @app.get("/ranking")

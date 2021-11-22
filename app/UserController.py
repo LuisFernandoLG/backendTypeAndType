@@ -29,6 +29,24 @@ class UserController(DbController):
         else:
             return False
 
+    def get_user(self, email) -> dict:
+        self.initialize_connection()
+        query = f"""SELECT idUser, name, surname, typeUser, email, password FROM users WHERE email='{email}'"""
+        self.cursor.execute(query)
+        data = self.cursor.fetchall()
+        self.close_connection()
+        return self._formar_user(data[0])
+
+    def _formar_user(self, userData):
+        return {
+            "id": userData[0],
+            "name": userData[1],
+            "surname": userData[2],
+            "typeUser": userData[3],
+            "email": userData[4],
+            "password": userData[5],
+        }
+
 
 # sc = UserController()
 

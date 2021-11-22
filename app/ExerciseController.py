@@ -65,5 +65,20 @@ class ExerciseController(DbController):
 
         return formated_data
 
+    def get_by_query(self, query):
+        self.initialize_connection()
+        results = self.cursor.callproc(
+            'searchByQuery', (query,)
+        )
+        results = [r.fetchall() for r in self.cursor.stored_results()][0]
+        self.close_connection()
+        return self.format_get_all(results)
 
-db = ExerciseController()
+    def get_by_query_and_category(self, query, idCategory):
+        self.initialize_connection()
+        results = self.cursor.callproc(
+            'searchByQueryAndCategory', args=(query, idCategory)
+        )
+        results = [r.fetchall() for r in self.cursor.stored_results()][0]
+        self.close_connection()
+        return self.format_get_all(results)
