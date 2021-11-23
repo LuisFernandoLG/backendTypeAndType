@@ -8,22 +8,20 @@ class ExerciseController(DbController):
 
     def add(self, exercise: ExerciseModel):
         self.initialize_connection()
-        query = f"""INSERT INTO exercises VALUES (NULL, "{exercise.title}", {exercise.points}, "{exercise.text_content}", {exercise.time},{exercise.status},{exercise.category},{exercise.difficulty});"""
-        self.cursor.execute(query)
+        result = self.cursor.callproc(
+            'addExercise', args=(exercise.title, exercise.points, exercise.text_content, exercise.time, exercise.status, exercise.category, exercise.difficulty))
         self.connection.commit()
         self.close_connection()
         return True
 
-    def delete(self, id):
+    def update(self, exercise: ExerciseModel):
         self.initialize_connection()
-        query = f"""DELETE FROM exercises WHERE idExercise = {id} """
-        self.cursor.execute(query)
+        result = self.cursor.callproc(
+            'updateExercise', args=(exercise.id, exercise.title, exercise.points, exercise.text_content, exercise.time, exercise.status, exercise.category, exercise.difficulty))
+
         self.connection.commit()
         self.close_connection()
         return True
-
-    def update(self):
-        pass
 
     def get(self, id):
         self.initialize_connection()
@@ -50,6 +48,34 @@ class ExerciseController(DbController):
         print(data)
         self.close_connection()
         return self.format_get_all(data)
+
+    def get_all_admin(self):
+        self.initialize_connection()
+        query = "SELECT * FROM adminExercisesView;"
+        self.cursor.execute(query)
+        data = self.cursor.fetchall()
+        print(data)
+        self.close_connection()
+        return self.format_get_all_admin(data)
+
+    def format_get_all_admin(self, exercises: list) -> list:
+        formated_data = []
+        for exercise in exercises:
+            formated_exercise = {
+                "id": exercise[0],
+                "title": exercise[1],
+                "textContent": exercise[2],
+                "category": exercise[3],
+                "difficulty": exercise[4],
+                "status": exercise[5],
+                "idCategory": exercise[6],
+                "idDifficulty": exercise[7],
+                "idStatus": exercise[8],
+
+            }
+            formated_data.append(formated_exercise)
+
+        return formated_data
 
     def format_get_all(self, exercises: list) -> list:
         formated_data = []

@@ -43,7 +43,7 @@ def get_basic_information():
     return {"Hello": "World"}
 
 
-@app.post("/exercise")
+@app.post("/admin/exercise")
 def add_exercise(exercise: ExerciseModel):
     response = exerciseDb.add(exercise)
     return {
@@ -53,12 +53,23 @@ def add_exercise(exercise: ExerciseModel):
     }
 
 
-@app.delete("/exercise/{id}")
-def delete_exercise(id):
-    response = exerciseDb.delete(id)
+@app.put("/admin/exercise")
+def update_exercise(exercise: ExerciseModel):
+    response = exerciseDb.update(exercise)
     return {
         "status": 202,
-        "statusText": "Successful Deleted",
+        "statusText": "Successful",
+        "data": exercise
+    }
+
+
+@app.get("/admin/exercises")
+def get_exercises_admin_view():
+    data = exerciseDb.get_all_admin()
+    return {
+        "status": 202,
+        "statusText": "Successful",
+        "data": data
     }
 
 

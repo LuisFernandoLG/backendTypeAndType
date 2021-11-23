@@ -34,5 +34,6 @@ class DbController():
 
     def close_connection(self):
         if self.connection.is_connected():
+            self.cursor.close()
             self.connection.close()
             print("MySQL connection is closed")
