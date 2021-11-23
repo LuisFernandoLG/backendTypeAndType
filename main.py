@@ -75,6 +75,11 @@ def get_exercises():
     }
 
 
+@app.get("/something")
+def get_exercise():
+    return {"message": "hi"}
+
+
 @app.get("/exercise/{id}")
 def get_exercise(id):
     data = exerciseDb.get(id)
