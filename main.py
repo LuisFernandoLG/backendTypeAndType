@@ -3,6 +3,8 @@ from typing import Optional
 from fastapi import FastAPI
 from pydantic.main import BaseModel
 from app.CategoriesController import CategoryController
+from app.DifficultiesController import DifficultyController
+from app.ExerStatusController import ExerStatusController
 from app.ExerciseController import ExerciseController
 from fastapi.middleware.cors import CORSMiddleware
 from app.ScoreController import ScoreController
@@ -18,6 +20,8 @@ userDb = UserController()
 scoreDb = ScoreController()
 sessionDb = SessionController()
 categoryDb = CategoryController()
+difficultyDB = DifficultyController()
+exerStatusDb = ExerStatusController()
 
 origins = ["*"]
 
@@ -48,20 +52,24 @@ def add_exercise(exercise: ExerciseModel):
 @app.put("/admin/exercise")
 def update_exercise(exercise: ExerciseModel):
     response = exerciseDb.update(exercise)
-    return {
-        "status": 202,
-        "statusText": "Successful",
-        "data": exercise
-    }
 
 
 @app.get("/admin/exercises")
 def get_exercises_admin_view():
-    data = exerciseDb.get_all_admin()
+    adminExercises = exerciseDb.get_all_admin()
+    categories = categoryDb.get_all()
+    difficulties = difficultyDB.get_all()
+    statuses = exerStatusDb.get_all()
+
     return {
         "status": 202,
         "statusText": "Successful",
-        "data": data
+        "data": {
+            "exercises": adminExercises,
+            "categories": categories,
+            "difficulties": difficulties,
+            "statuses": statuses
+        }
     }
 
 
