@@ -45,7 +45,6 @@ class ExerciseController(DbController):
         query = "select * from exercisesView;"
         self.cursor.execute(query)
         data = self.cursor.fetchall()
-        print(data)
         self.close_connection()
         return self.format_get_all(data)
 
@@ -54,7 +53,6 @@ class ExerciseController(DbController):
         query = "SELECT * FROM adminExercisesView;"
         self.cursor.execute(query)
         data = self.cursor.fetchall()
-        print(data)
         self.close_connection()
         return self.format_get_all_admin(data)
 
@@ -65,12 +63,13 @@ class ExerciseController(DbController):
                 "id": exercise[0],
                 "title": exercise[1],
                 "textContent": exercise[2],
-                "category": exercise[3],
-                "difficulty": exercise[4],
-                "status": exercise[5],
-                "idCategory": exercise[6],
-                "idDifficulty": exercise[7],
-                "idStatus": exercise[8],
+                "points": exercise[3],
+                "category": exercise[4],
+                "difficulty": exercise[5],
+                "status": exercise[6],
+                "idCategory": exercise[7],
+                "idDifficulty": exercise[8],
+                "idStatus": exercise[9],
 
             }
             formated_data.append(formated_exercise)

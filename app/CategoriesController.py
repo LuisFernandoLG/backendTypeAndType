@@ -11,7 +11,6 @@ class CategoryController(DbController):
         query = "SELECT * FROM categories"
         self.cursor.execute(query)
         data = self.cursor.fetchall()
-        print(data)
         self.close_connection()
         return self._format_get_all(data)
 

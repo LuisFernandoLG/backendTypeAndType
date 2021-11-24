@@ -46,14 +46,3 @@ class UserController(DbController):
             "email": userData[4],
             "password": userData[5],
         }
-
-
-# sc = UserController()
-
-# print(sc.add_new_user("Luis Fernando", "López",
-#       "Gutiérrez", "fer@gmail.com", "1234567890", 1))
-
-# print(sc.exist_user("fer@gmail.com"))
-
-
-# Necesitamos una vista en MYSQL para poder mostrar la info del usuario (:
