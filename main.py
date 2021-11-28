@@ -52,6 +52,11 @@ def add_exercise(exercise: ExerciseModel):
 @app.put("/admin/exercise")
 def update_exercise(exercise: ExerciseModel):
     response = exerciseDb.update(exercise)
+    return {
+        "status": 202,
+        "statusText": "Successful",
+        "data": response
+    }
 
 
 @app.get("/admin/exercises")
