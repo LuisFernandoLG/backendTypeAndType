@@ -21,7 +21,7 @@ class ExerciseController(DbController):
 
         self.connection.commit()
         self.close_connection()
-        return True
+        return exercise
 
     def get(self, id):
         self.initialize_connection()
@@ -86,6 +86,7 @@ class ExerciseController(DbController):
                 "textContent": exercise[2],
                 "category": exercise[3],
                 "difficulty": exercise[4],
+                "status": exercise[5],
             }
             formated_data.append(formated_exercise)
 
