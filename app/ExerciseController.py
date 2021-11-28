@@ -70,6 +70,7 @@ class ExerciseController(DbController):
                 "idCategory": exercise[7],
                 "idDifficulty": exercise[8],
                 "idStatus": exercise[9],
+                "time": exercise[10],
 
             }
             formated_data.append(formated_exercise)
