@@ -1,5 +1,6 @@
 from fastapi.params import Query
 from app.DbController import DbController
+from app.helpers import hasKey
 from app.models.ExerciseMode import ExerciseModel
 from app.models.ScoreModel import ScoreModel
 
@@ -57,3 +58,37 @@ class ScoreController(DbController):
 
             })
         return formated_data
+
+    def get_stadistics(self, idUser):
+        self.initialize_connection()
+        results = self.cursor.callproc(
+            'getStadistics', (idUser,)
+        )
+        results = [r.fetchall() for r in self.cursor.stored_results()][0]
+        print(results)
+        self.close_connection()
+        return self._format_stadistics(results)
+
+    def _format_stadistics(self, data):
+        data_formated = {}
+        for i in data:
+            exists = hasKey(data_formated, str(i[0]))
+            if(exists == True):
+                data_formated[str(i[0])] = [*data_formated[str(i[0])], {
+                    "exerciseId": i[0],
+                    "totalScore": i[1],
+                    "userId": i[2],
+                    "lastTimeTaken": i[3],
+                    "status": i[4]
+                }]
+
+            else:
+                data_formated[str(i[0])] = [{
+                    "exerciseId": i[0],
+                    "totalScore": i[1],
+                    "userId": i[2],
+                    "lastTimeTaken": i[3],
+                    "status": i[4]
+                }]
+
+        return list(data_formated.values())

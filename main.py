@@ -196,3 +196,12 @@ def get_ranking():
         "status": 202,
         "data": data
     }
+
+
+@app.get("/stadistics/{idUser}")
+def get_ranking(idUser):
+    data = scoreDb.get_stadistics(idUser)
+    return {
+        "status": 202,
+        "data": data
+    }
