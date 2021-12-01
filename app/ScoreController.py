@@ -65,7 +65,6 @@ class ScoreController(DbController):
             'getStadistics', (idUser,)
         )
         results = [r.fetchall() for r in self.cursor.stored_results()][0]
-        print(results)
         self.close_connection()
         return self._format_stadistics(results)
 
@@ -79,7 +78,8 @@ class ScoreController(DbController):
                     "totalScore": i[1],
                     "userId": i[2],
                     "lastTimeTaken": i[3],
-                    "status": i[4]
+                    "status": i[4],
+                    "title": i[5]
                 }]
 
             else:
@@ -88,7 +88,8 @@ class ScoreController(DbController):
                     "totalScore": i[1],
                     "userId": i[2],
                     "lastTimeTaken": i[3],
-                    "status": i[4]
+                    "status": i[4],
+                    "title": i[5]
                 }]
 
         return list(data_formated.values())
