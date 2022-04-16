@@ -16,7 +16,7 @@ from app.models.ExerciseMode import ExerciseModel
 from app.models.ScoreModel import ScoreModel
 from app.models.UserModel import UserModel
 from exampleData import exercises
-
+# Something?
 app = FastAPI()
 exerciseDb = ExerciseController()
 userDb = UserController()
