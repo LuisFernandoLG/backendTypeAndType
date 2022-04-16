@@ -1,3 +1,4 @@
+from fastapi import Query
 from app.models.UserModel import UserModel
 from app.DbController import DbController
 
@@ -11,7 +12,7 @@ class UserController(DbController):
             return False
 
         self.initialize_connection()
-        query = f"""INSERT INTO users VALUES (NULL, '{user.name}', '{user.surname}', '{user.second_surname}', '{user.email}', '{user.password}', 2);"""
+        query = f"""INSERT INTO users VALUES (NULL, '{user.name}', '{user.surname}', '{user.second_surname}', '{user.email}', '{user.password}', 2, '');"""
         self.cursor.execute(query)
         self.connection.commit()
         self.close_connection()
@@ -31,11 +32,19 @@ class UserController(DbController):
 
     def get_user(self, email) -> dict:
         self.initialize_connection()
-        query = f"""SELECT idUser, name, surname, typeUser, email, password FROM users WHERE email='{email}'"""
+        query = f"""SELECT idUser, name, surname, typeUser, email, password, imageProfile FROM users WHERE email='{email}'"""
         self.cursor.execute(query)
         data = self.cursor.fetchall()
         self.close_connection()
         return self._formar_user(data[0])
+    
+    def update_user(self, userName, email, password, imageProfile):
+        self.initialize_connection()
+        query = f"""UPDATE users SET name = '{userName}', password='{password}', imageProfile='{imageProfile}' WHERE email = '{email}';"""
+        self.cursor.execute(query)
+        self.connection.commit()
+        self.close_connection()
+        return True
 
     def _formar_user(self, userData):
         return {
@@ -45,4 +54,5 @@ class UserController(DbController):
             "typeUser": userData[3],
             "email": userData[4],
             "password": userData[5],
+            "imageProfile": userData[6],
         }

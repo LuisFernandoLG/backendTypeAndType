@@ -1,6 +1,5 @@
 from app.DbController import DbController
 
-
 class SessionController(DbController):
     def __init__(self):
         DbController.__init__(self)
@@ -16,4 +15,5 @@ class SessionController(DbController):
         x = result[2]
         self.connection.commit()
         self.close_connection()
+
         return x

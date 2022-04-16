@@ -1,7 +1,9 @@
+from imp import reload
 from logging import StreamHandler
 from typing import Optional
 from fastapi import FastAPI
 from pydantic.main import BaseModel
+import uvicorn
 from app.CategoriesController import CategoryController
 from app.DifficultiesController import DifficultyController
 from app.ExerStatusController import ExerStatusController
@@ -13,6 +15,7 @@ from app.UserController import UserController
 from app.models.ExerciseMode import ExerciseModel
 from app.models.ScoreModel import ScoreModel
 from app.models.UserModel import UserModel
+from exampleData import exercises
 
 app = FastAPI()
 exerciseDb = ExerciseController()
@@ -23,7 +26,16 @@ categoryDb = CategoryController()
 difficultyDB = DifficultyController()
 exerStatusDb = ExerStatusController()
 
-origins = ["*"]
+origins = [
+    "*",
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:8080",
+    "http://localhost:8000",
+    "http://localhost:3000",
+    "http://localhost:3000",
+]
 
 app.add_middleware(
     CORSMiddleware,
@@ -32,7 +44,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 @app.get("/")
 def get_basic_information():
@@ -205,3 +216,23 @@ def get_ranking(idUser):
         "status": 202,
         "data": data
     }
+
+@app.get("/englishExercises/{courseId}/{exerciseId}")
+def get_english_exercises(courseId, exerciseId):
+    print(exercises)
+    return {"data": exercises}
+
+class UserM(BaseModel):
+    userName: str
+    email: str
+    password: str
+    imageProfile : str
+
+@app.put("/user")
+def update_user(userM:UserM):
+    response = userDb.update_user(userM.userName, userM.email, userM.password, userM.imageProfile)
+    return {"status": 202}
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="localhost", port=8000)
