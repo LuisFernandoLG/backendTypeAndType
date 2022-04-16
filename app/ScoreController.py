@@ -41,7 +41,7 @@ class ScoreController(DbController):
 
     def get_ranking(self):
         self.initialize_connection()
-        query = "SELECT * FROM GetScores;"
+        query = "SELECT GetScores.*, imageProfile FROM GetScores, users WHERE GetScores.id = users.idUser;"
         self.cursor.execute(query)
         data = self.cursor.fetchall()
         self.close_connection()
@@ -55,6 +55,7 @@ class ScoreController(DbController):
                 "name": scoreUser[1],
                 "lastName": scoreUser[2],
                 "totalScore": scoreUser[3],
+                "imageProfile": scoreUser[4],
 
             })
         return formated_data
