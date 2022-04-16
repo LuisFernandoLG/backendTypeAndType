@@ -1,3 +1,4 @@
+from click import password_option
 from fastapi import Query
 from app.models.UserModel import UserModel
 from app.DbController import DbController
@@ -56,3 +57,20 @@ class UserController(DbController):
             "password": userData[5],
             "imageProfile": userData[6],
         }
+
+    def recover_pass(self, email):
+        exist_user = self.exist_user(email)
+        password = ""
+
+        if(exist_user):
+            self.initialize_connection()
+            query = f"""SELECT password FROM users WHERE email='{email}'"""
+            self.cursor.execute(query)
+            password = self.cursor.fetchall()[0][0]
+            self.close_connection()
+            
+        return {
+            "exist" : exist_user,
+            "password" : password 
+        }
+

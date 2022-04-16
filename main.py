@@ -45,6 +45,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.get("/")
 def get_basic_information():
     return {"Hello": "World"}
@@ -217,21 +218,35 @@ def get_ranking(idUser):
         "data": data
     }
 
+
 @app.get("/englishExercises/{courseId}/{exerciseId}")
 def get_english_exercises(courseId, exerciseId):
     print(exercises)
     return {"data": exercises}
 
+
 class UserM(BaseModel):
     userName: str
     email: str
     password: str
-    imageProfile : str
+    imageProfile: str
+
 
 @app.put("/user")
-def update_user(userM:UserM):
-    response = userDb.update_user(userM.userName, userM.email, userM.password, userM.imageProfile)
+def update_user(userM: UserM):
+    response = userDb.update_user(
+        userM.userName, userM.email, userM.password, userM.imageProfile)
     return {"status": 202}
+
+
+class RecoverPassModel(BaseModel):
+    email: str
+
+
+@app.post("/recover/pass")
+def update_user(recoverPassModel: RecoverPassModel):
+    response = userDb.recover_pass(recoverPassModel.email)
+    return {"response": 202, "data": response}
 
 
 if __name__ == "__main__":
