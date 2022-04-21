@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from pydantic.main import BaseModel
 import uvicorn
 from app.CategoriesController import CategoryController
+from app.CourseController import CourseController
 from app.DifficultiesController import DifficultyController
 from app.ExerStatusController import ExerStatusController
 from app.ExerciseController import ExerciseController
@@ -25,6 +26,7 @@ sessionDb = SessionController()
 categoryDb = CategoryController()
 difficultyDB = DifficultyController()
 exerStatusDb = ExerStatusController()
+courseDb = CourseController()
 
 origins = [
     "*",
@@ -247,6 +249,18 @@ class RecoverPassModel(BaseModel):
 def update_user(recoverPassModel: RecoverPassModel):
     response = userDb.recover_pass(recoverPassModel.email)
     return {"response": 202, "data": response}
+
+
+@app.get("/course/{courseId}")
+def getExercisesFromCourse(courseId):
+    response = courseDb.getCourse(courseId)
+    return {"status": 202, "data" : response}
+
+
+@app.get("/courses")
+def getAllCourses():
+    response = courseDb.get_all_courses()
+    return {"status":"202", "data": response}
 
 
 if __name__ == "__main__":
