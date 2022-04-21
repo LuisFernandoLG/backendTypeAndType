@@ -1,6 +1,5 @@
 from inspect import iscode
 import random
-from winreg import QueryValue
 from app.DbController import DbController
 import shortuuid
 
