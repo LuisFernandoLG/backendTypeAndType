@@ -38,6 +38,26 @@ WHERE coursesWithExercises.exerciseId = exercises.idExercise AND coursesWithExer
         mecaData = self.get_meca_exercises(courseId)
         return [*abcExercises, *mecaData]
 
+    def get_coursesTemplate(self):
+        self.initialize_connection()
+        query = "SELECT * FROM courses;"
+        self.cursor.execute(query)
+        courses = self.cursor.fetchall()
+        coursesData = []
+        for course in courses:
+            # abcData = self.get_abc_exercises(course[0])
+            # mecaData = self.get_meca_exercises(course[0])
+            coursesData.append({
+                "courseId": course[0],
+                "title": course[1],
+                "description": course[2],
+                "categoryCourse": course[3],
+            })
+
+        self.close_connection()
+        print(coursesData)
+        return coursesData
+
     def get_all_courses(self):
         self.initialize_connection()
         query = "SELECT * FROM courses;"

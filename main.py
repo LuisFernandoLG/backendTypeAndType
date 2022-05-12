@@ -262,6 +262,12 @@ def getAllCourses():
     response = courseDb.get_all_courses()
     return {"status":"202", "data": response}
 
+@app.get("/coursesTemplate")
+def getCoursesTemplate():
+    response = courseDb.get_coursesTemplate()
+    return {"status":"202", "data": response}
+
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="localhost", port=8000)
