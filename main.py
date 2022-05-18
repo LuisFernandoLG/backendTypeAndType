@@ -256,6 +256,26 @@ def getExercisesFromCourse(courseId):
     response = courseDb.getCourse(courseId)
     return {"status": 202, "data" : response}
 
+class CourseModel(BaseModel):
+    id: int
+    name: str
+    description: str
+    courseType: int
+    status: int
+
+
+@app.post("/course")
+def addCourse(courseModel : CourseModel):
+    response = courseDb.addCourse(courseModel)
+    return {"status": 202, "data" : response}
+
+@app.put("/course")
+def addCourse(courseModel : CourseModel):
+    response = courseDb.updateCourse(courseModel)
+    return {"status": 202, "data" : response}
+
+
+
 
 @app.get("/courses")
 def getAllCourses():
@@ -265,6 +285,42 @@ def getAllCourses():
 @app.get("/coursesTemplate")
 def getCoursesTemplate():
     response = courseDb.get_coursesTemplate()
+    return {"status":"202", "data": response}
+
+
+class MecaExercise(BaseModel):
+    mecaId: int
+    title: str
+    textContent: str
+    status: int
+
+@app.put("/course/mecaExercise")
+def updateMecaExercisex(mecaExercise : MecaExercise):
+    response = courseDb.updateMecaExercise(mecaExercise)
+    return {"status":"202", "data": response}
+
+@app.post("/course/mecaExercise/{courseId}")
+def addMecaExercise(courseId, mecaExercise : MecaExercise):
+    response = courseDb.addMecaExercise(courseId, mecaExercise)
+    return {"status":"202", "data": response}
+
+class AbcExercise(BaseModel):
+    idQuestion: int
+    title: str
+    question: str
+    correctAnswer: str
+    secondAnswer : str
+    tirthAnswer : str
+    status: int
+
+@app.put("/course/abcExercise")
+def updateAbcExercisex(abcExercise : AbcExercise):
+    response = courseDb.updateAbcExercise(abcExercise)
+    return {"status":"202", "data": response}
+
+@app.post("/course/abcExercise/{courseId}")
+def addAbcExercise(courseId, abcExercise : AbcExercise):
+    response = courseDb.addAbcExercise(courseId, abcExercise)
     return {"status":"202", "data": response}
 
 
