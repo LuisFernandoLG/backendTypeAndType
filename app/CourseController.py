@@ -98,7 +98,7 @@ class CourseController(DbController):
 
     def get_all_courses(self, userId = 0):
         self.initialize_connection()
-        query = "SELECT * FROM courses;"
+        query = "SELECT courses.*, difficulties.Name_D FROM test.courses, difficulties WHERE courses.difficultyId = difficulties.idDifficulty;"
         self.cursor.execute(query)
         courses = self.cursor.fetchall()
         self.close_connection()
@@ -111,11 +111,13 @@ class CourseController(DbController):
         for course in courses:
             abcData = self.get_abc_exercises(course[0],userId )
             mecaData = self.get_meca_exercises(course[0], userId)
+            print(course)
             coursesData.append({
                 "courseId": course[0],
                 "categoryName": course[1],
                 "description": course[2],
                 "courseType": course[3],
+                "difficulty": course[6],
                 "exercises": [*abcData, *mecaData],
             })
 
