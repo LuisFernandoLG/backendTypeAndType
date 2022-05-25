@@ -277,14 +277,21 @@ def addCourse(courseModel : CourseModel):
 
 
 
-@app.get("/courses")
-def getAllCourses():
-    response = courseDb.get_all_courses()
+@app.get("/courses/user/{userId}")
+def getAllCourses(userId):
+    response = courseDb.get_all_courses(userId)
     return {"status":"202", "data": response}
+
+
 
 @app.get("/coursesTemplate")
 def getCoursesTemplate():
     response = courseDb.get_coursesTemplate()
+    return {"status":"202", "data": response}
+
+@app.get("/exercisesMarked/{courseId}/{userId}")
+def getCoursesTemplatex(courseId, userId):
+    response = courseDb.get_abc_exercises_marked(courseId, userId)
     return {"status":"202", "data": response}
 
 
@@ -322,6 +329,19 @@ def updateAbcExercisex(abcExercise : AbcExercise):
 def addAbcExercise(courseId, abcExercise : AbcExercise):
     response = courseDb.addAbcExercise(courseId, abcExercise)
     return {"status":"202", "data": response}
+
+class ExerciseMarket(BaseModel):
+    courseId : int
+    exerciseId: int
+    userId : int
+    
+
+@app.post("/course/exercise/markascompleted")
+def addAbcExercise(marker : ExerciseMarket):
+    response = courseDb.markExerciseFromCourseCompleted(marker.courseId, marker.exerciseId, marker.userId )
+    return {"status":"202", "data": response}
+
+
 
 
 

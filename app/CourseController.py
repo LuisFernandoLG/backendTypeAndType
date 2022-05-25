@@ -10,34 +10,48 @@ class CourseController(DbController):
     def __init__(self):
         DbController.__init__(self)
 
-    def get_abc_exercises(self, courseId):
+    def get_abc_exercises_marked(self, courseId, userId):
         self.initialize_connection()
-        # Get abc exercises from a specific course
-        abcQuery = f"""SELECT questions.*, answers2.correctAnswer, answers2.secondAnswer, answers2.tirthAnswer, coursesWithExercises.courseId, coursesWithExercises.exerciseType FROM questions, answers2, coursesWithExercises
-WHERE coursesWithExercises.courseId = {courseId} AND coursesWithExercises.exerciseId = questions.idQuestion AND questions.idQuestion = answers2.questionId;
-"""
-        self.cursor.execute(abcQuery)
-        abcExercises = self.cursor.fetchall()
-        abcExercises = self.format_abc_exercise(abcExercises)
+        results = self.cursor.callproc(
+            'getAbcExercisesFromCourseMarkedAsCompleted', (userId, courseId,)
+        )
+        results = [r.fetchall() for r in self.cursor.stored_results()][0]
+        self.close_connection()
+        abcExercises = self.format_abc_exercise(results)
+        
+        
+
+        return abcExercises
+    
+
+    def get_abc_exercises(self, courseId, userId = 0):
+        self.initialize_connection()
+        result = self.cursor.callproc(
+            'getAbcExercisesFromCourseMarkedAsCompleted', (userId, courseId,)
+        )
+        results = [r.fetchall() for r in self.cursor.stored_results()][0]
+
+        abcExercises = self.format_abc_exercise(results)
 
         self.close_connection()
         return abcExercises
 
-    def get_meca_exercises(self, courseId):
+    def get_meca_exercises(self, courseId, userId = 0):
         self.initialize_connection()
 
-        mecaQuery = f"""SELECT mecaExercises.*, coursesWithExercises.courseId, coursesWithExercises.exerciseType  FROM mecaExercises, coursesWithExercises
-        WHERE coursesWithExercises.exerciseId = mecaExercises.mecaId AND coursesWithExercises.courseId = {courseId} AND coursesWithExercises.exerciseType = 1;"""
-        self.cursor.execute(mecaQuery)
-        mecaData = self.cursor.fetchall()
-        mecaData = self.format_meca_exercises(mecaData)
+        result = self.cursor.callproc(
+            'getMecaExercisesFromCourseMarkedAsCompleted', (userId, courseId,)
+        )
+        results = [r.fetchall() for r in self.cursor.stored_results()][0]
+
+        mecaData = self.format_meca_exercises(results)
 
         self.close_connection()
         return mecaData
 
     def getCourse(self, courseId):
-        abcExercises = self.get_abc_exercises(courseId)
-        mecaData = self.get_meca_exercises(courseId)
+        abcExercises = self.get_abc_exercises(courseId, 0)
+        mecaData = self.get_meca_exercises(courseId, 0)
         return [*abcExercises, *mecaData]
 
     
@@ -82,21 +96,21 @@ WHERE coursesWithExercises.courseId = {courseId} AND coursesWithExercises.exerci
         print(coursesData)
         return coursesData
 
-    def get_all_courses(self):
+    def get_all_courses(self, userId = 0):
         self.initialize_connection()
         query = "SELECT * FROM courses;"
         self.cursor.execute(query)
         courses = self.cursor.fetchall()
         self.close_connection()
-
-        data_formated = self._get_exercises_from_course_formated(courses)
+        
+        data_formated = self._get_exercises_from_course_formated(courses, userId)
         return data_formated
 
-    def _get_exercises_from_course_formated(self, courses):
+    def _get_exercises_from_course_formated(self, courses, userId = 0):
         coursesData = []
         for course in courses:
-            abcData = self.get_abc_exercises(course[0])
-            mecaData = self.get_meca_exercises(course[0])
+            abcData = self.get_abc_exercises(course[0],userId )
+            mecaData = self.get_meca_exercises(course[0], userId)
             coursesData.append({
                 "courseId": course[0],
                 "categoryName": course[1],
@@ -144,6 +158,16 @@ WHERE coursesWithExercises.courseId = {courseId} AND coursesWithExercises.exerci
         self.connection.commit()
         self.close_connection()
         return abcExercise
+
+    def markExerciseFromCourseCompleted(self, courseId, exerciseId, userId):
+        self.initialize_connection()
+        self.cursor.callproc(
+            'markExerciseFromCourseCompleted', args=(courseId, exerciseId, userId))
+
+        self.connection.commit()
+        self.close_connection()
+        return {"isDone": True}        
+
     
 
 
@@ -171,7 +195,7 @@ WHERE coursesWithExercises.courseId = {courseId} AND coursesWithExercises.exerci
                 "answers": answers,
                 "couseId": exercise[10],
                 "exerciseType": exercise[11],
-                "isDone": False})
+                "isDone": exercise[12],})
 
         return allExercises
 
@@ -201,5 +225,6 @@ WHERE coursesWithExercises.courseId = {courseId} AND coursesWithExercises.exerci
                 # "difficulty": exercise[7],
                 "courseId": exercise[4],
                 "exerciseType": exercise[5],
+                "isDone": exercise[6],
             })
         return allExercises
