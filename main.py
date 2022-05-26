@@ -342,6 +342,21 @@ def addAbcExercise(marker : ExerciseMarket):
     return {"status":"202", "data": response}
 
 
+@app.get("/meca/exercises/{userId}")
+def getExercisesWithMarked(userId):
+    response = exerciseDb.get_all_with_marked_as_completed(userId)
+    return {"status":"202", "data": response}
+
+
+class MecaExerciseMarket(BaseModel):
+    mecaId : int
+    userId : int
+    
+
+@app.post("/meca/exercise/mark")
+def getExercisesWithMarked(mecaExerciseMarket:MecaExerciseMarket):
+    response = exerciseDb.markExerciseFromCourseCompleted(mecaExerciseMarket.mecaId,mecaExerciseMarket.userId)
+    return {"status":"202", "data": response}
 
 
 

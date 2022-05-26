@@ -14,6 +14,8 @@ class ExerciseController(DbController):
         self.close_connection()
         return True
 
+    
+
     def update(self, exercise: ExerciseModel):
         self.initialize_connection()
         result = self.cursor.callproc(
@@ -47,6 +49,28 @@ class ExerciseController(DbController):
         data = self.cursor.fetchall()
         self.close_connection()
         return self.format_get_all(data)
+
+    def get_all_with_marked_as_completed(self, userId):
+        self.initialize_connection()
+        result = self.cursor.callproc(
+            'getMecaExercisesWithMarkedAsCompleted', (userId,)
+        )
+        results = [r.fetchall() for r in self.cursor.stored_results()][0]
+        mecaData = self.format_get_all_with_completed(results)
+
+        self.close_connection()
+        return mecaData
+
+    def markExerciseFromCourseCompleted(self, mecaId, userId):
+        self.initialize_connection()
+        self.cursor.callproc(
+            'markMecaExerciseCompleted', args=(mecaId, userId))
+
+        self.connection.commit()
+        self.close_connection()
+        return {"isDone": True} 
+
+
 
     def get_all_admin(self):
         self.initialize_connection()
@@ -91,6 +115,25 @@ class ExerciseController(DbController):
             formated_data.append(formated_exercise)
 
         return formated_data
+
+    
+    def format_get_all_with_completed(self, exercises: list) -> list:
+        formated_data = []
+        for exercise in exercises:
+            formated_exercise = {
+                "id": exercise[0],
+                "title": exercise[1],
+                "textContent": exercise[2],
+                "category": exercise[3],
+                "difficulty": exercise[4],
+                "status": exercise[5],
+                "isCompleted": exercise[6],
+            }
+            formated_data.append(formated_exercise)
+
+        return formated_data
+
+
 
     def get_by_query(self, query):
         self.initialize_connection()
