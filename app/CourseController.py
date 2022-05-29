@@ -1,7 +1,3 @@
-from inspect import iscode
-import random
-
-from fastapi import Query
 from app.DbController import DbController
 import shortuuid
 
@@ -57,7 +53,7 @@ class CourseController(DbController):
     
     def addCourse(self, courseModel):
         self.initialize_connection()
-        query = f"""INSERT INTO courses VALUES (NULL, '{courseModel.name}', '{courseModel.description}', 2, {courseModel.status})"""
+        query = f"""INSERT INTO courses VALUES (NULL, '{courseModel.name}', '{courseModel.description}', 2, {courseModel.status}, {courseModel.difficultyId})"""
         self.cursor.execute(query)
         self.connection.commit()
         self.close_connection()
@@ -66,7 +62,7 @@ class CourseController(DbController):
     
     def updateCourse(self, courseModel):
         self.initialize_connection()
-        query = f"""UPDATE courses SET name = '{courseModel.name}', description = '{courseModel.description}', status = {courseModel.status} WHERE id = {courseModel.id}"""
+        query = f"""UPDATE courses SET name = '{courseModel.name}', description = '{courseModel.description}', status = {courseModel.status}, difficultyId = {courseModel.difficultyId} WHERE id = {courseModel.id}"""
         self.cursor.execute(query)
         self.connection.commit()
         self.close_connection()
@@ -90,6 +86,8 @@ class CourseController(DbController):
                 "title": course[1],
                 "description": course[2],
                 "categoryCourse": course[3],
+                "statusId" : course[4],
+                "difficultyId": course[5],
             })
 
         self.close_connection()
@@ -97,11 +95,13 @@ class CourseController(DbController):
         return coursesData
 
     def get_all_courses(self, userId = 0):
+        unactiveCourseId = 2
         self.initialize_connection()
-        query = "SELECT courses.*, difficulties.Name_D FROM test.courses, difficulties WHERE courses.difficultyId = difficulties.idDifficulty;"
+        query = f"""SELECT courses.*, difficulties.Name_D FROM test.courses, difficulties WHERE courses.difficultyId = difficulties.idDifficulty AND courses.status != {unactiveCourseId};"""
         self.cursor.execute(query)
         courses = self.cursor.fetchall()
         self.close_connection()
+        print("usando")
         
         data_formated = self._get_exercises_from_course_formated(courses, userId)
         return data_formated

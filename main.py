@@ -262,6 +262,7 @@ class CourseModel(BaseModel):
     description: str
     courseType: int
     status: int
+    difficultyId: int
 
 
 @app.post("/course")
