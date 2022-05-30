@@ -10,6 +10,7 @@ from app.DifficultiesController import DifficultyController
 from app.ExerStatusController import ExerStatusController
 from app.ExerciseController import ExerciseController
 from fastapi.middleware.cors import CORSMiddleware
+from app.RiceDb import RiceDb
 from app.ScoreController import ScoreController
 from app.Session import SessionController
 from app.UserController import UserController
@@ -27,6 +28,7 @@ categoryDb = CategoryController()
 difficultyDB = DifficultyController()
 exerStatusDb = ExerStatusController()
 courseDb = CourseController()
+riceDb = RiceDb()
 
 origins = [
     "*",
@@ -358,6 +360,29 @@ class MecaExerciseMarket(BaseModel):
 def getExercisesWithMarked(mecaExerciseMarket:MecaExerciseMarket):
     response = exerciseDb.markExerciseFromCourseCompleted(mecaExerciseMarket.mecaId,mecaExerciseMarket.userId)
     return {"status":"202", "data": response}
+
+
+@app.get("/rice/exercises/user/{userId}")
+def getRiceExercises(userId):
+    response = riceDb.get_all(userId)
+    return {"status":"202", "data": response}
+
+@app.get("/rice/exercise/{riceId}")
+def getRiceExercise(riceId):
+    response = riceDb.get_exercise(riceId)
+    return {"status":"202", "data": response}
+
+class RiceExerciseMarket(BaseModel):
+    riceId : int
+    userId : int
+    
+
+@app.post("/rice/exercise/mark")
+def getRiceExercise(riceExercise: RiceExerciseMarket):
+    response = riceDb.markExerciseAsDone(riceExercise)
+    return {"status":"202", "data": response}
+
+
 
 
 
