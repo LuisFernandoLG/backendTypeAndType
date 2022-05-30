@@ -382,6 +382,24 @@ def getRiceExercise(riceExercise: RiceExerciseMarket):
     response = riceDb.markExerciseAsDone(riceExercise)
     return {"status":"202", "data": response}
 
+class RiceExercise(BaseModel):
+    id: int
+    title: str
+    description: str
+    difficultyId: int
+    neckColor : str
+    status: int
+
+@app.post("/rice/exercise")
+def addRice(riceExercise : RiceExercise):
+    response = riceDb.addExercise(riceExercise)
+    return {"status":"202", "data": response}
+
+@app.put("/rice/exercise")
+def addRice(riceExercise : RiceExercise):
+    response = riceDb.updateExercise(riceExercise)
+    return {"status":"202", "data": response}
+
 
 
 

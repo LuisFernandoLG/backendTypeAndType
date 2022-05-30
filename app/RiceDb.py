@@ -27,7 +27,8 @@ class RiceDb(DbController):
                 "difficulty": item[3],
                 "neckColor": item[4],
                 "difficultyId": item[5],
-                "isDone": item[6]
+                "isDone": item[6],
+                "status" : item[7]
             })
         return data_formated
 
@@ -58,6 +59,30 @@ class RiceDb(DbController):
         self.connection.commit()
         self.close_connection()
         return True
+
+    
+    def addExercise(self, riceExercise):
+        self.initialize_connection()
+        result = self.cursor.callproc(
+            'addRice', args=(riceExercise.title, riceExercise.description, riceExercise.difficultyId, riceExercise.neckColor, riceExercise.status))
+
+        self.connection.commit()
+        self.close_connection()
+        return True
+
+    
+    def updateExercise(self, riceExercise):
+        self.initialize_connection()
+        result = self.cursor.callproc(
+            'updateRice', args=(riceExercise.id, riceExercise.title, riceExercise.description, riceExercise.difficultyId, riceExercise.neckColor, riceExercise.status))
+
+        self.connection.commit()
+        self.close_connection()
+        return True
+
+    
+
+    
 
 
     
