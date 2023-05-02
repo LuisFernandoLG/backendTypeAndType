@@ -8,7 +8,7 @@ class DbController():
         self.database = 'b5izkncghqfl1swxkukj'
         self.user = 'uabk4vz4e2r6vwhk'
         self.password = '3MITTMqtVflvBSsyDeD5'
-        self.port = "21164"
+        self.port = "11228"
         self.connection = None
         self.cursor = None
 
