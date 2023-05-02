@@ -4,11 +4,11 @@ from mysql.connector import Error, connect
 
 class DbController():
     def __init__(self):
-        self.host = '155.248.201.14'
-        self.database = 'test'
-        self.user = 'luisl'
-        self.password = 'Luislopez123!'
-        self.port = "3306"
+        self.host = 'b5izkncghqfl1swxkukj-mysql.services.clever-cloud.com'
+        self.database = 'b5izkncghqfl1swxkukj'
+        self.user = 'uabk4vz4e2r6vwhk'
+        self.password = '3MITTMqtVflvBSsyDeD5'
+        self.port = "21164"
         self.connection = None
         self.cursor = None
 
